@@ -1,0 +1,34 @@
+---
+- name: cross compile executable for RPi4
+  hosts: blitzcrank
+  remote_user: root
+
+  tasks:
+    - name: Build program on local machine
+      # NOTE: run on local machine instead of remote
+      ansible.builtin.command:
+        argv:
+          - crystal
+          - build
+          - src/card-switch.cr
+          - --cross-compile
+          - --target
+          - aarch64-linux-gnu
+
+    - name: Copy executable to remote machine
+
+    - name: Cross-compile on remote machine
+      ansible.builtin.command:
+        argv:
+          - cc
+          - card-switch.o
+          - -o
+          - card-switch
+          - -lpigpio
+          - -lpcre2-8
+          - -lm
+          - -lgc
+          - -lpthread
+          - -levent
+          - -lrt
+          - -ldl

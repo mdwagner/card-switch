@@ -1,0 +1,18 @@
+name: card-switch
+version: 0.1.0
+
+authors:
+  - Michael Wagner <mdwranger@gmail.com>
+
+targets:
+  card-switch:
+    main: src/card-switch.cr
+
+crystal: 1.8.2
+
+license: MIT
+
+dependencies:
+  pigpio:
+    github: mdwagner/pigpio.cr
+    version: 0.1.0

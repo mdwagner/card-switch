@@ -1,0 +1,6 @@
+version: 2.0
+shards:
+  pigpio:
+    git: https://github.com/mdwagner/pigpio.cr.git
+    version: 0.1.0
+

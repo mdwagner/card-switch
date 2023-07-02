@@ -1,3 +1,4 @@
 require "pigpio"
 
-puts Pigpio::LibPigpio.gpio_version
+version = Pigpio::LibPigpio.gpio_version
+puts "pigpio version: v#{version}"

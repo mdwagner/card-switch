@@ -1,29 +1,34 @@
 ---
-- name: cross compile executable for RPi4
+- name: Cross-compile executable for RPi4
   hosts: blitzcrank
-  remote_user: root
 
   tasks:
-    - name: Build program on local machine
-      # NOTE: run on local machine instead of remote
+    - name: Build program
       ansible.builtin.command:
         argv:
           - crystal
           - build
-          - src/card-switch.cr
           - --cross-compile
           - --target
           - aarch64-linux-gnu
+          - -o
+          - dist/card-switch
+          - src/card-switch.cr
+      delegate_to: localhost
 
-    - name: Copy executable to remote machine
+    - name: Copy object
+      ansible.builtin.copy:
+        src: dist/card-switch.o
+        dest: /tmp
+        force: true
 
-    - name: Cross-compile on remote machine
+    - name: Link program
       ansible.builtin.command:
         argv:
           - cc
-          - card-switch.o
+          - /tmp/card-switch.o
           - -o
-          - card-switch
+          - /tmp/card-switch
           - -lpigpio
           - -lpcre2-8
           - -lm
@@ -32,3 +37,23 @@
           - -levent
           - -lrt
           - -ldl
+
+    - name: Remove object
+      ansible.builtin.file:
+        path: /tmp/card-switch.o
+        state: absent
+
+    - name: Move program to dietpi home
+      ansible.builtin.copy:
+        remote_src: true
+        src: /tmp/card-switch
+        dest: /home/dietpi
+        owner: dietpi
+        group: dietpi
+        mode: '0755'
+        force: true
+
+    - name: Remove temp program
+      ansible.builtin.file:
+        path: /tmp/card-switch
+        state: absent
